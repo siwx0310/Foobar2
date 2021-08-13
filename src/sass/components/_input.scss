@@ -1,13 +1,5 @@
 @use "../abstracts/vars";
 
-.form-group {
-  margin-bottom: 1rem;
-}
-
-#multihint {
-  margin-bottom: 2rem;
-}
-
 input:-webkit-autofill {
   -webkit-text-fill-color: vars.$secondary-color !important;
   -webkit-box-shadow: 0 0 0 30px vars.$input-color inset !important;
@@ -23,25 +15,29 @@ input {
   border: 1px solid vars.$primary-color !important;
   color: #b1afaf !important;
 }
+
 input,
 textarea {
   background-color: vars.$input-color !important;
 }
 
-input:invalid {
-  border: 1px solid vars.$invalid-color !important;
+.hint {
+  color: vars.$container-color;
 }
 
 input:valid {
   border: 1px solid vars.$valid-color !important;
 }
 
-:is(input, textarea):focus {
-  border: 1px solid vars.$primary-color !important;
-  color: vars.$secondary-color !important;
+input:not(:focus):not(:placeholder-shown):invalid {
+  border: 1px solid vars.$invalid-color !important;
 }
 
-:is(input, textarea):focus:valid {
+input:not(:focus):not(:placeholder-shown):invalid ~ .hint {
+  color: vars.$invalid-color;
+}
+
+input:not(:focus):not(:placeholder-shown):valid {
   border: 1px solid vars.$valid-color !important;
 }
 
@@ -58,11 +54,17 @@ input:valid {
 }
 
 .hint {
-  color: vars.$container-color;
   cursor: default;
 }
+.form-group {
+  margin-bottom: 1rem;
+}
 
-@media only screen and (max-width: 766px) {
+#multihint {
+  margin-bottom: 2rem;
+}
+
+@media only screen and (max-width: 1000px) {
   #visualcard {
     display: none;
   }

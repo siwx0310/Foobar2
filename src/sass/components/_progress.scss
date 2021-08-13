@@ -1,0 +1,19 @@
+@use "../abstracts/vars";
+
+#myProgress33 {
+  margin-top: -80px !important;
+  padding-bottom: 40px;
+}
+.progress-container {
+  display: flex;
+  justify-content: center;
+}
+
+.progress-back {
+  background-color: vars.$container-color;
+  border-radius: 50%;
+}
+
+.cart-body {
+  margin-top: 80px !important;
+}

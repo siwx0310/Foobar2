@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import CartItem from "../components/CartItem";
 import Pay from "../components/Pay";
 import Confirm from "../components/Confirm";
@@ -39,28 +39,13 @@ export default function Cart(props) {
         <div className="col-12 col-md-10">
           <article className="beerComponent row mb-3">
             <div className="card">
-              <div className="card-body component">
-
+              <div className="card-body component cart-body">
                 <CartItem
                   basket={props.basket}
                   addToBasket={props.addToBasket}
                   removeFromBasket={props.removeFromBasket}
+                  hideBasket={hideBasket}
                 />
-                <div className="row justify-content-center pb-3">
-                  <div className="col d-flex justify-content-center">
-                    {emptyBasket >= 1 && (
-                      <button
-                        className="btn btn-confirm"
-                        id="hideBasketBtn"
-                        onClick={() => {
-                          hideBasket();
-                        }}
-                      >
-                        Confirm
-                      </button>
-                    )}
-                  </div>
-                </div>
 
                 {emptyBasket >= 1 && (
                   <Pay

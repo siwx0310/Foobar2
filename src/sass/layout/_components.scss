@@ -1,10 +1,16 @@
 @use "../abstracts/vars";
 
 .card {
-    background-color: vars.$screen-color;
+  background-color: vars.$screen-color;
 }
 
 .component {
-    background-color: vars.$container-color;
-    border-radius: .5rem;
+  background-color: vars.$container-color;
+  border-radius: 0.5rem;
+}
+
+@media only screen and (min-width: 1400px) {
+  .form-container {
+    padding-right: 3rem;
+  }
 }

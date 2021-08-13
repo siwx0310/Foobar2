@@ -4,7 +4,12 @@ import {
   formatCreditCardNumber,
   formatCVC,
   formatExpirationDate,
+  nextInput,
+  validateForm,
 } from "./Form.jsx";
+// https://www.npmjs.com/package/react-circular-progressbar
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
 
 /* 
 We have used the npm package react-credit-cards for the payment form. 
@@ -30,23 +35,27 @@ export default class PaymentForm extends React.Component {
 
   handleInputFocus = (evt) => {
     this.setState({ focus: evt.target.name });
+    validateForm(evt);
   };
 
   // on every change in input send target. Functions in form.jsx
   handleInputChange = ({ target }) => {
     if (target.name === "number") {
       target.value = formatCreditCardNumber(target.value);
+      nextInput(target);
     } else if (target.name === "expiry") {
       target.value = formatExpirationDate(target.value);
+      nextInput(target);
     } else if (target.name === "cvc") {
       target.value = formatCVC(target.value);
+      nextInput(target);
     }
 
     this.setState({ [target.name]: target.value });
   };
 
   render() {
-    console.log(this.props);
+    const percentage = 66;
     // defining props from card.jsx
     const addToUserOrder = this.props.addToUserOrder;
     const basketItems = this.props.basket;
@@ -61,7 +70,6 @@ export default class PaymentForm extends React.Component {
       const name = form.name.checkValidity();
       const expiry = form.expiry.checkValidity();
       const cvc = form.cvc.checkValidity();
-      const spanColor = "#f2b705";
 
       // if form is valid
       if (
@@ -107,45 +115,31 @@ export default class PaymentForm extends React.Component {
         // resetform in App.jsx
         resetFrom();
       } else {
-        // If the form isn't valid check for invalid input and display error message
-        console.log("not valid");
-
-        // email validate error txt
-        if (email != true) {
-          document.querySelector("#email span").style.color = "#f2b705";
-        } else {
-          document.querySelector("#email span").style.color = "#262626";
-        }
-
-        // cardnumber validate error txt
+        console.log("form not valid");
         if (cardNumber != true) {
-          document.querySelector("#cardnumber span").style.color = "#f2b705";
-        } else {
-          document.querySelector("#cardnumber span").style.color = "#262626";
+          document.querySelector("#cardnumber .hint").style.color = "#dd421a";
         }
 
-        // card name validate error txt
         if (name != true) {
-          document.querySelector("#cardname span").style.color = "#f2b705";
-        } else {
-          document.querySelector("#cardname span").style.color = "#262626";
+          document.querySelector("#cardname span").style.color = "#dd421a";
         }
-
-        //cvc and expiry validate error txt
+        if (email != true) {
+          document.querySelector("#email span").style.color = "#dd421a";
+        }
         if (expiry != true && cvc != true) {
           document.querySelector("#multihint").textContent =
             "PLEASE ENTER THE EXPERIENCE DATE AND CVC NUMBER OF YOUR CARD";
-          document.querySelector("#multihint").style.color = "#f2b705";
+          document.querySelector("#multihint").style.color = "#dd421a";
         } else if (expiry != true && cvc != false) {
           document.querySelector("#multihint").textContent =
             "PLEASE ENTER THE EXPERIENCE DATE OF YOUR CARD";
-          document.querySelector("#multihint").style.color = "#f2b705";
+          document.querySelector("#multihint").style.color = "#dd421a";
         } else if (cvc != true && expiry != false) {
           document.querySelector("#multihint ").textContent =
             "PLEASE ENTER THE CVC OF YOUR CARD";
-          document.querySelector("#multihint").style.color = "#f2b705";
+          document.querySelector("#multihint").style.color = "#dd421a";
         } else {
-          document.querySelector("#multihint").style.color = "#262626";
+          document.querySelector("#multihint").style.color = "transparent";
         }
       }
     }
@@ -192,146 +186,166 @@ export default class PaymentForm extends React.Component {
     return (
       <div id="PaymentForm" hidden>
         <div className="row">
-          <div className="col-12">
-            <div className="row justify-content-center">
-              <div className="col d-flex justify-content-center myProgress">
-                <h2>66%</h2>
+          <div id="myProgress33" className="row">
+            <div className="col-12 progress-container">
+              <div
+                className="progress-back"
+                style={{ width: 120, height: 120 }}
+              >
+                <CircularProgressbar
+                  value={66}
+                  text={`${percentage}%`}
+                  strokeWidth={4}
+                  styles={buildStyles({
+                    // Colors
+                    pathColor: `#55b082`,
+                    textColor: "white",
+                    trailColor: "#333333",
+                  })}
+                />
               </div>
             </div>
           </div>
-        <form id="form" className="col-12">
-          <div className="row">
-            <div className="col">
-              <div className="row">
-                <div className="form-group" id="cardnumber">
-                  <label className=""> CARD NUMBER</label>
-                  <input
-                    type="tel"
-                    name="number"
-                    className="form-control"
-                    pattern="[\d| ]{19,22}"
-                    required
-                    onChange={this.handleInputChange}
-                    onFocus={this.handleInputFocus}
-                    id="number"
-                  />
-                  <span className="hint">
-                    PLEASE ENTER YOUR CARD NUMBER CORRECTLY
-                  </span>
-                </div>
-                <div className="form-group">
-                  <div className="col">
-                    <div className="row">
-                      <div
-                        className="col-3 col-md-5 col-lg-3 expiry"
-                        id="expiry"
-                      >
-                        <label className="">EXPIRY DATE </label>
-                        <input
-                          type="tel"
-                          name="expiry"
-                          className="form-control"
-                          pattern="\d\d/\d\d"
-                          required
-                          onChange={this.handleInputChange}
-                          onFocus={this.handleInputFocus}
+          <form id="form" className="col-12">
+            <div className="row">
+              <div className="col" id="visualcard">
+                <Cards
+                  cvc={this.state.cvc}
+                  expiry={this.state.expiry}
+                  focused={this.state.focus}
+                  name={this.state.name}
+                  number={this.state.number}
+                />
+              </div>
+              <div className="col form-container">
+                <div className="row">
+                  <div className="form-group" id="cardnumber">
+                    <label className=""> CARD NUMBER</label>
+                    <input
+                      type="tel"
+                      name="number"
+                      className="form-control input"
+                      pattern="[\d| ]{19,22}"
+                      required
+                      onChange={this.handleInputChange}
+                      onFocus={this.handleInputFocus}
+                      placeholder=" "
+                      id="number"
+                    />
+                    <span className="hint">
+                      PLEASE ENTER YOUR CARD NUMBER CORRECTLY
+                    </span>
+                  </div>
+                  <div className="form-group">
+                    <div className="col">
+                      <div className="row">
+                        <div
+                          className="col-3 col-md-4 col-lg-3 expiry"
                           id="expiry"
-                        />
+                        >
+                          <label className="">EXPIRY DATE </label>
+                          <input
+                            type="tel"
+                            name="expiry"
+                            className="form-control input"
+                            pattern="\d\d/\d\d"
+                            required
+                            onChange={this.handleInputChange}
+                            onFocus={this.handleInputFocus}
+                            placeholder=" "
+                            id="expirydate"
+                          />
+                        </div>
+                        <div className="col-3 col-md-4 col-lg-3 cvc">
+                          <label className=""> CVC </label>
+                          <input
+                            type="tel"
+                            name="cvc"
+                            className="form-control input"
+                            pattern="\d{3}"
+                            required
+                            onChange={this.handleInputChange}
+                            onFocus={this.handleInputFocus}
+                            placeholder=" "
+                            id="cvc"
+                          />
+                        </div>
                       </div>
-                      <div className="col-3 col-md-5 col-lg-3 cvc">
-                        <label className=""> CVC </label>
-                        <input
-                          type="tel"
-                          name="cvc"
-                          className="form-control"
-                          pattern="\d{3}"
-                          required
-                          onChange={this.handleInputChange}
-                          onFocus={this.handleInputFocus}
-                          id="cvc"
-                        />
-                      </div>
+                      <span className="col hint" id="multihint">
+                        PLEASE ENTER THE EXPERIENCE DATE AND CVC NUMBER OF YOUR
+                        CARD
+                      </span>
                     </div>
-                    <span className="col hint" id="multihint">
-                      PLEASE ENTER THE EXPERIENCE DATE AND CVC NUMBER OF YOUR
-                      CARD
+                  </div>
+
+                  <div className="form-group" id="cardname">
+                    <label className="">FULL NAME</label>
+                    <input
+                      type="text"
+                      name="name"
+                      className="form-control input"
+                      required
+                      onChange={this.handleInputChange}
+                      onFocus={this.handleInputFocus}
+                      placeholder=" "
+                      id="name"
+                    />
+                    <span className="hint">
+                      PLEASE ENTER YOUR FULL NAME. IT WILL ONLY BE USED TO SHOW
+                      YOU YOUR ORDER
+                    </span>
+                  </div>
+                  <div className="form-group" id="email">
+                    <label className="" htmlFor="email">
+                      E-MAIL
+                    </label>
+                    <input
+                      type="email"
+                      name="email"
+                      autoComplete="email"
+                      onFocus={this.handleInputFocus}
+                      className="form-control input"
+                      pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
+                      required
+                      placeholder=" "
+                      id="email"
+                    />
+                    <span className="hint">
+                      PLEASE ENTER YOUR EMAIL. WE WILL ONLY USE YOUR EMAIL TO
+                      SEND THE BILL
                     </span>
                   </div>
                 </div>
-
-                <div className="form-group" id="cardname">
-                  <label className="">FULL NAME</label>
-                  <input
-                    type="text"
-                    name="name"
-                    className="form-control"
-                    required
-                    onChange={this.handleInputChange}
-                    onFocus={this.handleInputFocus}
-                    id="name"
-                  />
-                  <span className="hint">
-                    PLEASE ENTER YOUR FULL NAME. IT WILL ONLY BE USED TO SHOW
-                    YOU YOUR ORDER
-                  </span>
-                </div>
-                <div className="form-group" id="email">
-                  <label className="" htmlFor="email">
-                    E-MAIL
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    autoComplete="email"
-                    className="form-control"
-                    required
-                    id="email"
-                  />
-                  <span className="hint">
-                    PLEASE ENTER YOUR EMAIL. WE WILL ONLY USE YOUR EMAIL TO SEND
-                    THE BILL
-                  </span>
-                </div>
-              </div>
-              <div className="row paybuttons">
-                <div className="col">
-                  <button
-                    type="button"
-                    className="btn btn-primary"
-                    id="hideBasketBtn"
-                    onClick={() => {
-                      displayBasket();
-                    }}
-                  >
-                    Basket
-                  </button>
-                </div>
-                <div className="col">
-                  <div className="form-actions">
-                    <button // using default btn because of npm package
+                <div className="row paybuttons">
+                  <div className="col">
+                    <button
                       type="button"
-                      className="btn btn-confirm"
+                      className="btn btn-primary"
+                      id="hideBasketBtn"
                       onClick={() => {
-                        submitPayment();
+                        displayBasket();
                       }}
                     >
-                      PAY
+                      Basket
                     </button>
+                  </div>
+                  <div className="col">
+                    <div className="form-actions">
+                      <button // using default btn because of npm package
+                        type="button"
+                        className="btn btn-confirm"
+                        onClick={() => {
+                          submitPayment();
+                        }}
+                      >
+                        PAY
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="col" id="visualcard">
-              <Cards
-                cvc={this.state.cvc}
-                expiry={this.state.expiry}
-                focused={this.state.focus}
-                name={this.state.name}
-                number={this.state.number}
-              />
-            </div>
-          </div>
-        </form>
+          </form>
         </div>
       </div>
     );

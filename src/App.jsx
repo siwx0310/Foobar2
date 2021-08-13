@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Router } from "@reach/router";
+// https://www.npmjs.com/package/react-loading
+import ReactLoading from "react-loading"; // changed by siw
 
 import Nav from "./components/Nav";
 import Dashboard from "./pages/Dashboard";
@@ -18,7 +20,7 @@ function App() {
 
   // Found on javascript.plainenglish.io START
   // - https://javascript.plainenglish.io/using-reacts-useeffect-hook-to-fetch-data-and-periodically-refresh-that-data-2a69b6d44081
-  
+
   // Fetch data from Heroku, and set it to state
   const getData = () => {
     fetch("https://foobarsiwmorten.herokuapp.com")
@@ -192,6 +194,16 @@ function App() {
 
 export default App;
 
+// changed by siw
 function Loader() {
-  return <p>Loading...</p>;
+  return (
+    <div className="Loadingpage">
+      <ReactLoading
+        type={"spinningBubbles"}
+        color="#f2b705"
+        height={222}
+        width={125}
+      />
+    </div>
+  );
 }

@@ -1,5 +1,10 @@
 import React from "react";
 import { Link } from "@reach/router";
+// https://www.npmjs.com/package/react-loading
+import ReactLoading from "react-loading"; // changed by siw
+// https://www.npmjs.com/package/react-circular-progressbar
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
 
 export default function Confirm(props) {
   const newOrder = { order: [] };
@@ -8,6 +13,7 @@ export default function Confirm(props) {
   const serving = props.serving;
   let orderCommingSoon = true;
   let displayorder = false;
+  const percentage = 100;
 
   if (props.userOrder.length <= 1 || props.userOrder[0].order.length < 0) {
     const currentOrder = props.userOrder.map((entry) => {
@@ -44,24 +50,44 @@ export default function Confirm(props) {
   return (
     <div className="row justify-content-center text-center">
       <div hidden id="confirmPayment" className="col-12">
-        <div className="row">
-          <div className="col-12">
-            <div className="row justify-content-center">
-              <div className="col d-flex justify-content-center myProgress">
-                <h2>100%</h2>
-              </div>
+        <div id="myProgress33" className="row">
+          <div className="col-12 progress-container">
+            <div className="progress-back" style={{ width: 120, height: 120 }}>
+              <CircularProgressbar
+                value={100}
+                text={`${percentage}%`}
+                strokeWidth={4}
+                styles={buildStyles({
+                  // Colors
+                  pathColor: `#55b082`,
+                  textColor: "white",
+                  trailColor: "#333333",
+                })}
+              />
             </div>
           </div>
         </div>
         <div hidden={orderCommingSoon === false}>
           <h2>Your order will be displayed in a few secondes</h2>
+          {/*changed by siw*/}
+          <div className="Loadingform">
+            <ReactLoading
+              type={"spinningBubbles"}
+              color="#f2b705"
+              height={222}
+              width={125}
+            />
+          </div>
         </div>
-        <div className="row justify-content-center" hidden={displayorder === false}>
+        <div
+          className="row justify-content-center"
+          hidden={displayorder === false}
+        >
           <div className="col-12 col-md-10 pb-3">
-            <h3><span>Hey {newOrder.name}!</span></h3>;
-            <p>
-              Thank you for ordering.
-            </p>
+            <h3>
+              <span>Hey {newOrder.name}!</span>
+            </h3>
+            ;<p>Thank you for ordering.</p>
             <p>You can follow your order on the dashboard.</p>
           </div>
           <div className="col-12 col-md-10 pb-3">
@@ -77,7 +103,8 @@ export default function Confirm(props) {
           </div>
           <div className="col-12 col-md-10 pb-3">
             <p>
-              Click the star in the navigations menu, when you are ready to rate the beers you have tried.
+              Click the star in the navigations menu, when you are ready to rate
+              the beers you have tried.
             </p>
           </div>
         </div>

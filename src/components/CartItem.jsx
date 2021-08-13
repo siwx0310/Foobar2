@@ -2,25 +2,48 @@ import React from "react";
 import { Link } from "@reach/router";
 import LazyLoad from "react-lazyload";
 import cleanImageName from "../helpers/cleanImageName.js";
+// https://www.npmjs.com/package/react-circular-progressbar
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
 
-export default function CartItem({ basket, addToBasket, removeFromBasket }) {
+export default function CartItem({
+  basket,
+  addToBasket,
+  removeFromBasket,
+  hideBasket,
+}) {
   const basketLength = basket.length;
+
+  const percentage = 33;
 
   return (
     <section id="cartItems">
       <div id="noItemsInBasket">{basketLength === 0 && <NoOrders />}</div>
       <div>
-        {basketLength > 0 ? 
-        <div id="myProgress33" className="row" >
-          <div className="col-12">
-            <div className="row justify-content-center">
-              <div className="col d-flex justify-content-center myProgress">
-                <h2>33%</h2>
+        {basketLength > 0 ? (
+          <div id="myProgress33" className="row">
+            <div className="col-12 progress-container">
+              <div
+                className="progress-back"
+                style={{ width: 120, height: 120 }}
+              >
+                <CircularProgressbar
+                  value={33}
+                  text={`${percentage}%`}
+                  strokeWidth={4}
+                  styles={buildStyles({
+                    // Colors
+                    pathColor: `#55b082`,
+                    textColor: "white",
+                    trailColor: "#333333",
+                  })}
+                />
               </div>
             </div>
           </div>
-        </div>
-        : ""}
+        ) : (
+          ""
+        )}
         <ul id="basketItems" className="ps-0">
           {basket.map((item) => (
             <CartList
@@ -33,6 +56,21 @@ export default function CartItem({ basket, addToBasket, removeFromBasket }) {
           ))}
         </ul>
         {basketLength >= 1 && <TotalPriceInBasket basket={basket} />}
+        <div className="row justify-content-center pb-3">
+          <div className="col d-flex justify-content-center">
+            {basketLength >= 1 && (
+              <button
+                className="btn btn-confirm"
+                id="hideBasketBtn"
+                onClick={() => {
+                  hideBasket();
+                }}
+              >
+                Confirm
+              </button>
+            )}
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -80,7 +118,6 @@ function CartList(props) {
               +
             </button>
           </div>
-          
         </div>
       </div>
       <div className="col-7 col-md-4">
@@ -120,7 +157,9 @@ function TotalPriceInBasket(props) {
   return (
     <div className="row justify-content-center totalprice">
       <div className="col d-flex justify-content-center">
-        <h4>Total <span className="totalPrice">{totalPrice},-</span></h4>
+        <h4>
+          Total <span className="totalPrice">{totalPrice},-</span>
+        </h4>
       </div>
     </div>
   );
@@ -137,7 +176,7 @@ function NoOrders() {
         <Link className="btn btn-primary" to="../beers">
           Menu
         </Link>
-      </div> 
+      </div>
     </div>
   );
 }
